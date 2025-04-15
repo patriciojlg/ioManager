@@ -105,14 +105,14 @@ func SaveMetadataOnS3(taskID string, metadata any) error {
 	return nil
 }
 
-func GetInputFileFromS3(taskID, taskName string) ([]byte, error) {
-	prefixMainInput := utils.GetMainInputBatchPrefixS3ObjectKey(taskID, taskName)
+func GetMainInputFileFromS3(args models.SaveInputFileArgs) ([]byte, error) {
+	prefixMainInput := utils.GetPrefixMainInputS3Object(args)
 	files, err := listObjectsS3(prefixMainInput)
 	if err != nil {
 		return nil, fmt.Errorf("error listing objects in S3: %w", err)
 	}
 	if len(files) == 0 {
-		return nil, fmt.Errorf("no files found in S3 for taskID: %s", taskID)
+		return nil, fmt.Errorf("no files found in S3 for taskID: %s", args.Id)
 	}
 	// search xlsx file
 	var key string

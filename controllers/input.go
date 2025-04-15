@@ -1,23 +1,22 @@
 package controllers
 
 import (
-	"fmt"
 	"ioManager/models"
 	providers "ioManager/providers"
 	"ioManager/shared/utils"
 )
 
 func SaveInput(args map[string]any) models.Response {
-	inputFileArgs, err := models.SaveInputFileArgsFromArgs(args)
+	argsSaveInput, err := models.SaveInputFileArgsFromArgs(args)
 	if err != nil {
 		return models.Error400Response(err)
 	}
-	decoded, err := utils.AnyInputBodyEncodedToBytes(inputFileArgs.Format, inputFileArgs.Body)
+	decoded, err := utils.AnyInputBodyEncodedToBytes(argsSaveInput.Format, argsSaveInput.Body)
 	if err != nil {
 		return models.Error400Response(err)
 	}
 	// Subir a S3
-	key, err := utils.GetMainInputBatchS3ObjectKey(inputFileArgs.Id, inputFileArgs.TaskName, inputFileArgs.Filename)
+	key, err := utils.GetMainInputFileBatchS3ObjectKey(argsSaveInput)
 	if err != nil {
 		return models.Error400Response(err)
 	}
@@ -26,9 +25,9 @@ func SaveInput(args map[string]any) models.Response {
 		return models.Error400Response(err)
 	}
 	meta := models.MetaDataInput{
-		TaskID:     inputFileArgs.Id,
+		TaskID:     argsSaveInput.Id,
 		S3Key:      key,
-		Format:     inputFileArgs.Format,
+		Format:     argsSaveInput.Format,
 		UploadedAt: 0, // TODO: Cambiar por timestamp
 	}
 
@@ -40,8 +39,10 @@ func SaveInput(args map[string]any) models.Response {
 	}
 
 }
+
+/*
 func ExplodeInput(args map[string]any) models.Response {
-	data, err := providers.GetInputFileFromS3(args["id"].(string), args["task_name"].(string))
+	data, err := providers.GetMainInputFileFromS3(args)
 	if err != nil {
 		return models.Error400Response(err)
 	}
@@ -68,3 +69,4 @@ func ExplodeInput(args map[string]any) models.Response {
 		DetailError: "",
 	}
 }
+*/

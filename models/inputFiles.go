@@ -7,12 +7,13 @@ import (
 )
 
 type SaveInputFileArgs struct {
-	Body     string `mapstructure:"body"`
-	Filename string `mapstructure:"filename"`
-	Format   string `mapstructure:"format"`
-	Coded    string `mapstructure:"coded"`
-	Id       string `mapstructure:"id"`
-	TaskName string `mapstructure:"task_name"`
+	Body        string `mapstructure:"body"`
+	Filename    string `mapstructure:"filename"`
+	Format      string `mapstructure:"format"`
+	Coded       string `mapstructure:"coded"`
+	Id          string `mapstructure:"id"`
+	TaskName    string `mapstructure:"task_name"`
+	AccountName string `mapstructure:"account_name"`
 }
 
 // FromArgs llena el struct desde un map[string]any

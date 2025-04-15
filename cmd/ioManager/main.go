@@ -19,8 +19,8 @@ func handler(ctx context.Context, rawEvent json.RawMessage) models.Response {
 	switch evt.Command {
 	case "save-input":
 		return controllers.SaveInput(evt.Args)
-	case "explode-input":
-		return controllers.ExplodeInput(evt.Args)
+	//case "explode-input":
+	//	return controllers.ExplodeInput(evt.Args)
 	default:
 		return models.Error400Response(errors.New("command not found"))
 	}
