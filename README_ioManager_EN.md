@@ -44,12 +44,12 @@ The Lambda expects commands in JSON format. General structure:
 
 ### Supported Commands
 
-| Command           | Description                                                                  |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `save-input`      | Saves a file (XLSX, JSON, etc.) to S3                                        |
-| `explode-input`   | Splits an XLSX file into multiple JSON files (one per row) and uploads to S3 |
-| `implode`         | Merges multiple JSON files from an S3 prefix into an Excel file              |
-| `download-output` | Returns the final generated file as bytes                                    |
+| Command          | Description                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| `save-input`     | Saves a file (XLSX, JSON, etc.) to S3                                       |
+| `explode-input`  | Splits an XLSX file into multiple JSON files (one per row) and uploads to S3|
+| `implode`        | Merges multiple JSON files from an S3 prefix into an Excel file             |
+| `download-output`| Returns the final generated file as bytes                                   |
 
 > Each command uses specific `args`.
 
