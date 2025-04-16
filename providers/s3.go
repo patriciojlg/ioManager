@@ -129,11 +129,11 @@ func GetMainInputFileFromS3(args models.SaveInputFileArgs) ([]byte, error) {
 	}
 	return data, nil
 }
-func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) error {
+func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) (int, error) {
 	var wg sync.WaitGroup
 	errCh := make(chan error, len(files))
 	semaphore := make(chan struct{}, settings.S3_MAX_WORKERS)
-
+	quantityFiles := len(files)
 	for _, file := range files {
 		wg.Add(1)
 
@@ -141,7 +141,7 @@ func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) error
 			defer wg.Done()
 			semaphore <- struct{}{} // ocupar slot
 
-			key := fmt.Sprintf("%s/%s", prefix, f.Filename)
+			key := fmt.Sprintf("%s%s", prefix, f.Filename)
 			_, err := s3Client.PutObject(&s3.PutObjectInput{
 				Bucket:      aws.String(settings.BUCKETNAME),
 				Key:         aws.String(key),
@@ -165,8 +165,8 @@ func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) error
 		for err := range errCh {
 			log.Println("❌", err)
 		}
-		return fmt.Errorf("algunos archivos fallaron en la subida")
+		return -1, fmt.Errorf("algunos archivos fallaron en la subida")
 	}
 
-	return nil
+	return quantityFiles, nil
 }

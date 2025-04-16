@@ -10,7 +10,7 @@ type SaveInputFileArgs struct {
 	Body        string `mapstructure:"body"`
 	Filename    string `mapstructure:"filename"`
 	Format      string `mapstructure:"format"`
-	Coded       string `mapstructure:"coded"`
+	Encoded     string `mapstructure:"encoded"`
 	Id          string `mapstructure:"id"`
 	TaskName    string `mapstructure:"task_name"`
 	AccountName string `mapstructure:"account_name"`
@@ -22,7 +22,7 @@ func SaveInputFileArgsFromArgs(args map[string]any) (SaveInputFileArgs, error) {
 	if err := mapstructure.Decode(args, c); err != nil {
 		return *c, err
 	}
-	if c.Coded == "" {
+	if c.Encoded == "" {
 		return *c, errors.New("coded is required")
 	}
 	if c.TaskName == "" {
@@ -42,5 +42,22 @@ func SaveInputFileArgsFromArgs(args map[string]any) (SaveInputFileArgs, error) {
 		return *c, errors.New("id is required")
 	}
 
+	return *c, nil
+}
+
+func ExplodeInputFileArgs(args map[string]any) (SaveInputFileArgs, error) {
+	c := &SaveInputFileArgs{}
+	if err := mapstructure.Decode(args, c); err != nil {
+		return *c, err
+	}
+	if c.TaskName == "" {
+		return *c, errors.New("task_name is required")
+	}
+	if c.Id == "" {
+		return *c, errors.New("id is required")
+	}
+	if c.AccountName == "" {
+		return *c, errors.New("account_name is required")
+	}
 	return *c, nil
 }
