@@ -3,6 +3,55 @@
 **ioManager** is a modular AWS Lambda-based system for processing and transforming files as part of automation workflows. Designed to operate via command-style JSON payloads, this project supports uploading files, converting them, splitting and merging them, and more.
 
 ---
+# 📋 To-Do List 
+📁 Project Infrastructure
+
+- [x] Configure AWS Lambda with container image
+
+- [x] Define modular folder structure (commands/, controllers/, providers/, utils/)
+
+- [x] Create unified input payload structure (command, args)
+
+- [x] Create standard response structure (success, error)
+
+🚀 Commands
+
+- [x] Save-Input-File: Save xlsx file (main batch)
+
+- [x] Explode-Input-File: Split an Excel file into multiple .json files (tasks of batch)
+
+- [ ] Implode-Outputs: Merge multiple .json files into a final Excel file in main-output/
+
+🔥 Commands Under Development
+
+- [ ] set-new-task-configuration: Create a configuration file for each task in S3 (/$taskname/input/exploded/$idtask/config.json)
+
+📊 Suggested Future Commands (File Management Focus)
+
+- [ ] parquet-files: Create a .parquet  archive containing multiple S3 files (glue athena applications)
+
+
+/$taskname/output/
+    |- output-final.xlsx
+    |- output-merged.json
+
+📖 Documentation
+
+- [ ] Document all available commands
+
+- [ ] Provide examples of input and output payloads
+
+- [ ] Document local development setup (sam local, Docker)
+
+- [ ] Explain expected S3 folder structures
+
+🔬 Optional Future Improvements
+
+- [ ] Implement batch operations to automate implode/merge over full S3 prefixes
+
+- [ ] Add schema validation for incoming JSON files
+
+- [ ] Add operational logs saved as log.txt inside related S3 folders
 
 ## 🚀 Deployment on AWS Lambda
 
