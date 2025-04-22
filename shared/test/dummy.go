@@ -25,3 +25,12 @@ func getDummySaveInputFileArgs() models.SaveInputFileArgs {
 		Encoded:     "base64",
 	}
 }
+
+func getDummyGetTaskConfigurationArgs() models.GetTaskConfigurationArgs {
+	// Create a GetTaskConfigurationArgs instance with dummy data
+	return models.GetTaskConfigurationArgs{
+		TaskName:    "solicitud_transferencia",
+		AccountName: "prenda-chile",
+		Id:          "r52d434",
+	}
+}

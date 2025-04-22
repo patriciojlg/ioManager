@@ -39,6 +39,21 @@ func listObjectsS3(prefix string) ([]string, error) {
 
 	return keys, nil
 }
+func ListSettingsTaskFilesOnS3() ([]string, error) {
+	listFiles, err := listObjectsS3("settings/")
+	if err != nil {
+		return nil, fmt.Errorf("error listing settings files in S3: %w", err)
+	}
+	var taskNames []string
+	for _, file := range listFiles {
+		if file[len(file)-5:] == ".json" {
+			//only filename without settings and .json
+			file = file[len("settings/") : len(file)-5]
+			taskNames = append(taskNames, file)
+		}
+	}
+	return taskNames, nil
+}
 func uploadJsonToS3(taskID, filename string, data any) (string, error) {
 	bucket := settings.BUCKETNAME
 	key := fmt.Sprintf("%s/%s", taskID, filename)
@@ -170,3 +185,30 @@ func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) (int,
 
 	return quantityFiles, nil
 }
+
+func GetJsonBatchSettings(taskName string) (models.ConfigurationTemplate, error) {
+	s3ObjectkeyBatchSettings := fmt.Sprintf("settings/%s.json", taskName)
+	filecontent, err := getObjectS3(s3ObjectkeyBatchSettings)
+	if err != nil {
+		return models.ConfigurationTemplate{}, fmt.Errorf("error downloading file: %w", err)
+	}
+	var jsonBatchSettings models.ConfigurationTemplate
+	err = json.Unmarshal(filecontent, &jsonBatchSettings)
+	if err != nil {
+		return models.ConfigurationTemplate{}, fmt.Errorf("error unmarshalling JSON: %w", err)
+	}
+	return jsonBatchSettings, nil
+}
+
+/*
+def get_json_batch_settings(task_name: str) -> dict:
+    s3_objectkey_batch_settings = f"settings/{task_name}.json"
+    filecontent = _download_file(s3_objectkey_batch_settings)
+    if filecontent is None:
+        raise ValueError(f"Error downloading file: {s3_objectkey_batch_settings}")
+    json_batch_settings = json.loads(filecontent.decode("utf-8"))
+    return json_batch_settings
+
+
+
+*/
