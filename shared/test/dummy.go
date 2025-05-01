@@ -34,3 +34,13 @@ func getDummyGetTaskConfigurationArgs() models.GetTaskConfigurationArgs {
 		Id:          "r52d434",
 	}
 }
+
+func getDummyImploteOutputsArgs() map[string]any {
+	// Create a ImplodeOutputFilesArgs instance with dummy data
+	return map[string]any{
+		"task_name":    "solicitud_transferencia",
+		"account_name": "prenda-chile",
+		"id":           "r52d434",
+		"format":       "xlsx",
+	}
+}

@@ -14,6 +14,8 @@
 
 - [x] Create standard response structure (success, error)
 
+- [x] Get task settings
+
 🚀 Commands
 
 - [x] Save-Input-File: Save xlsx file (main batch)

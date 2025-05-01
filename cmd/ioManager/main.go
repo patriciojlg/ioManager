@@ -24,7 +24,8 @@ func handler(ctx context.Context, rawEvent json.RawMessage) (models.Response, er
 		return controllers.SaveInput(evt.Args), nil
 	case "explode-input":
 		return controllers.ExplodeInput(evt.Args), nil
-
+	case "implode-output":
+		return controllers.ImplodeOutput(evt.Args)
 	// TASK'S CONFIGURATION COMMANDS
 	case "get-task-configuration":
 		resp, err := controllers.GetConfigurationTemplate(evt.Args["taskName"].(string))

@@ -9,7 +9,9 @@ import (
 func getBaseTaskNameAccountS3Object(argsTask models.SaveInputFileArgs) string {
 	return settings.BASE_BATCH_PREFIX_S3 + argsTask.AccountName + "/" + argsTask.TaskName + "/" + argsTask.Id + "/"
 }
-
+func getBaseTaskNameFromStringsArgs(taskName, accountName, id string) string {
+	return settings.BASE_BATCH_PREFIX_S3 + accountName + "/" + taskName + "/" + id + "/"
+}
 func GetMainInputFileBatchS3ObjectKey(argsTask models.SaveInputFileArgs) (string, error) {
 	baseS3ObjectKey := GetPrefixMainInputS3Object(argsTask)
 	mainInputFileLessFormat := baseS3ObjectKey + argsTask.Id
@@ -52,8 +54,16 @@ func GetPrefixExplodedOutputs(argsTask models.SaveInputFileArgs) string {
 	baseTaskNameAccount := getBaseTaskNameAccountS3Object(argsTask)
 	return baseTaskNameAccount + settings.EXPLODED_OUTPUT_FOLDER
 }
-
+func GetPrefixExplodedOutputsFromArgs(argsTask models.ImplodeOutputFilesArgs) string {
+	baseTaskNameAccount := getBaseTaskNameFromStringsArgs(argsTask.TaskName, argsTask.AccountName, argsTask.Id)
+	return baseTaskNameAccount + settings.EXPLODED_OUTPUT_FOLDER
+}
 func GetPrefixImplodedOutput(argsTask models.SaveInputFileArgs) string {
 	baseTaskNameAccount := getBaseTaskNameAccountS3Object(argsTask)
+	return baseTaskNameAccount + settings.IMPLODED_OUTPUT_FOLDER
+}
+
+func GetPrefixImplodeOutputsFromArgs(argsTask models.ImplodeOutputFilesArgs) string {
+	baseTaskNameAccount := getBaseTaskNameFromStringsArgs(argsTask.TaskName, argsTask.AccountName, argsTask.Id)
 	return baseTaskNameAccount + settings.IMPLODED_OUTPUT_FOLDER
 }

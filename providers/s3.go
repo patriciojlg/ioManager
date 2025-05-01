@@ -31,7 +31,9 @@ func listObjectsS3(prefix string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error listing objects in S3: %w", err)
 	}
-
+	if len(resp.Contents) == 0 {
+		return nil, fmt.Errorf("no objects found in S3 for prefix: %s", prefix)
+	}
 	var keys []string
 	for _, obj := range resp.Contents {
 		keys = append(keys, *obj.Key)
@@ -185,7 +187,14 @@ func UploadJSONFilesConcurrentlyV1(files []models.JSONFile, prefix string) (int,
 
 	return quantityFiles, nil
 }
+func ListAllOutputFiles(prefix string) ([]string, error) {
+	files, err := listObjectsS3(prefix)
+	if err != nil {
+		return nil, fmt.Errorf("error listing objects in S3: %w", err)
+	}
+	return files, nil
 
+}
 func GetJsonBatchSettings(taskName string) (models.ConfigurationTemplate, error) {
 	s3ObjectkeyBatchSettings := fmt.Sprintf("settings/%s.json", taskName)
 	filecontent, err := getObjectS3(s3ObjectkeyBatchSettings)
@@ -202,13 +211,38 @@ func GetJsonBatchSettings(taskName string) (models.ConfigurationTemplate, error)
 
 /*
 def get_json_batch_settings(task_name: str) -> dict:
-    s3_objectkey_batch_settings = f"settings/{task_name}.json"
-    filecontent = _download_file(s3_objectkey_batch_settings)
-    if filecontent is None:
-        raise ValueError(f"Error downloading file: {s3_objectkey_batch_settings}")
-    json_batch_settings = json.loads(filecontent.decode("utf-8"))
-    return json_batch_settings
 
-
-
+	s3_objectkey_batch_settings = f"settings/{task_name}.json"
+	filecontent = _download_file(s3_objectkey_batch_settings)
+	if filecontent is None:
+	    raise ValueError(f"Error downloading file: {s3_objectkey_batch_settings}")
+	json_batch_settings = json.loads(filecontent.decode("utf-8"))
+	return json_batch_settings
 */
+func DownloadObjectsConcurrently(keys []string) []models.S3DownloadObjectKeyResult {
+	var wg sync.WaitGroup
+	resultsChan := make(chan models.S3DownloadObjectKeyResult, len(keys))
+
+	for _, key := range keys {
+		wg.Add(1)
+		go func(k string) {
+			defer wg.Done()
+			body, err := getObjectS3(k)
+			resultsChan <- models.S3DownloadObjectKeyResult{
+				Key:  k,
+				Body: body,
+				Err:  err,
+			}
+		}(key)
+	}
+
+	wg.Wait()
+	close(resultsChan)
+
+	var results []models.S3DownloadObjectKeyResult
+	for res := range resultsChan {
+		results = append(results, res)
+	}
+
+	return results
+}
